@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Landing Page Interaktif</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1976d2;
+      --secondary: #36d1c4;
+      --accent: #5b86e5;
+      --bg: #f6f9fb;
+      --white: #fff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: #222;
+      font-family: 'Montserrat', Arial, sans-serif;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 32px 12px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 {
+      font-family: 'Poppins', Arial, sans-serif;
+      font-weight: 700;
+      font-size: 2.1rem;
+      margin-bottom: 16px;
+      color: var(--primary);
+      text-align: center;
+    }
+    .desc {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 600;
+      font-size: 1.13rem;
+      margin-bottom: 32px;
+      text-align: center;
+      color: #444;
+    }
+    .menu-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: center;
+      margin-bottom: 25px;
+      width: 100%;
+    }
+    .menu-btn {
+      flex: 1 1 40%;
+      min-width: 135px;
+      max-width: 220px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      padding: 18px 10px;
+      font-size: 1.15rem;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.17s, transform 0.16s, box-shadow 0.17s;
+      box-shadow: 0 2px 10px rgba(91,134,229,0.08);
+      margin-top: 8px;
+    }
+    .menu-btn:hover, .menu-btn:focus {
+      background: var(--accent);
+      color: var(--white);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 4px 18px rgba(54, 209, 196,0.16);
+    }
+    .data-tabel {
+      width: 100%;
+      max-width: 99vw;
+      overflow-x: auto;
+      margin-bottom: 25px;
+      animation: fadeIn 0.45s;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: var(--white);
+    }
+    th, td {
+      padding: 9px 14px;
+      border: 1px solid #b2bec3;
+      text-align: left;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    th {
+      background: #f2f6fa;
+      color: var(--primary);
+      font-family: 'Poppins', Arial, sans-serif;
+      font-weight: 700;
+    }
+    .back-btn {
+      margin-top: 10px;
+      background: var(--secondary);
+      color: var(--white);
+      border: none;
+      outline: none;
+      border-radius: 10px;
+      padding: 10px 28px;
+      font-size: 1rem;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.16s, transform 0.13s;
+    }
+    .back-btn:hover, .back-btn:focus {
+      background: var(--primary);
+      transform: scale(1.04);
+    }
+    .error-msg {
+      color: #d32f2f;
+      padding: 14px;
+      margin-bottom: 16px;
+      text-align: center;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 600;
+      background: #fff3f3;
+      border-radius: 8px;
+      border: 1px solid #ffcdd2;
+      animation: fadeIn 0.35s;
+    }
+    @media (max-width: 700px) {
+      .container { padding: 18px 2vw 6px 2vw; }
+      h1 { font-size: 1.3rem; }
+      .desc { font-size: 1rem; }
+      .menu-btn { font-size: 1rem; min-width: 120px; }
+      th, td { font-size: 0.97rem; }
+    }
+    @media (max-width: 400px) {
+      .menu-btn { min-width: 90px; font-size: 0.95rem; padding: 13px 6px; }
+      th, td { padding: 7px 4px; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px);}
+      to   { opacity: 1; transform: none;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Landing page content, will be replaced by JS as needed -->
+    <div id="main-view">
+      <h1>Menu Monitoring</h1>
+      <div class="desc">
+        Silakan pilih menu di bawah untuk menampilkan data sesuai kebutuhan Anda.
+      </div>
+      <div class="menu-btns">
+        <button class="menu-btn" data-csv="urban.csv">Ukur Beban</button>
+        <button class="menu-btn" data-csv="pemadaman.csv">Pemadaman</button>
+        <button class="menu-btn" data-csv="mandorline.csv">Mandorline</button>
+        <button class="menu-btn" data-csv="patroli.csv">Patroli</button>
+      </div>
+    </div>
+    <div id="content-view" style="display:none"></div>
+  </div>
+  <script>
+    // State tracking for history
+    let currentView = 'main';
+    let lastCSV = null;
+
+    const mainView = document.getElementById('main-view');
+    const contentView = document.getElementById('content-view');
+
+    // Handle menu button clicks
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const csvFile = this.getAttribute('data-csv');
+        showTableView(csvFile);
+        window.history.pushState({view: 'table', csv: csvFile}, '', '');
+      });
+    });
+
+    // Show table view with CSV
+    function showTableView(csvFile) {
+      currentView = 'table';
+      lastCSV = csvFile;
+      mainView.style.display = 'none';
+      contentView.style.display = 'block';
+      contentView.innerHTML = '<div class="desc">Memuat data...</div>';
+      fetch(csvFile)
+        .then(res => {
+          if (!res.ok) throw new Error('Gagal memuat file: ' + csvFile);
+          return res.text();
+        })
+        .then(text => {
+          const htmlTable = csvToTable(text);
+          contentView.innerHTML = `
+            <div class="data-tabel">${htmlTable}</div>
+            <button class="back-btn" id="btn-back">Kembali</button>
+          `;
+          document.getElementById('btn-back').onclick = function(){
+            showMainView();
+            window.history.pushState({view:'main'}, '', '');
+          };
+        })
+        .catch(err => {
+          contentView.innerHTML = `
+            <div class="error-msg">Data tidak dapat dimuat.<br>${err.message}</div>
+            <button class="back-btn" id="btn-back">Kembali</button>
+          `;
+          document.getElementById('btn-back').onclick = function(){
+            showMainView();
+            window.history.pushState({view:'main'}, '', '');
+          };
+        });
+    }
+
+    // Show landing/main view
+    function showMainView() {
+      currentView = 'main';
+      lastCSV = null;
+      mainView.style.display = 'block';
+      contentView.style.display = 'none';
+    }
+
+    // CSV to HTML Table
+    function csvToTable(csvText) {
+      const rows = csvText.trim().split('\n').map(row => row.split(','));
+      if(rows.length === 0) return '<div class="error-msg">Tidak ada data</div>';
+      let html = '<table>';
+      html += '<thead><tr>' + rows[0].map(h => `<th>${escapeHtml(h)}</th>`).join('') + '</tr></thead>';
+      html += '<tbody>';
+      for(let i=1;i<rows.length;i++) {
+        html += '<tr>' + rows[i].map(d => `<td>${escapeHtml(d)}</td>`).join('') + '</tr>';
+      }
+      html += '</tbody></table>';
+      return html;
+    }
+    function escapeHtml(str) {
+      return str.replace(/[<>&"]/g, c => ({
+        '<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'
+      })[c]);
+    }
+
+    // Handle browser back (popstate)
+    window.onpopstate = function(event) {
+      if(event.state) {
+        if(event.state.view === 'main') showMainView();
+        else if(event.state.view === 'table' && event.state.csv) showTableView(event.state.csv);
+      } else {
+        // Default: show main
+        showMainView();
+      }
+    };
+
+    // On load, add main to history if empty
+    window.addEventListener('DOMContentLoaded', () => {
+      if(!window.history.state) window.history.replaceState({view:'main'}, '', '');
+    });
+  </script>
+</body>
+</html>
